@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';
 
-import { CreatePollData } from './types';
+import { AddParticipantData, CreatePollData } from './types';
 import { Poll } from './interfaces/Poll.interface';
 import { IORedisKey } from 'src/redis/options';
 
@@ -55,6 +55,73 @@ export class PollsRepository {
         `Failed to add poll ${JSON.stringify(initialPoll)}\n${e}`,
       );
       throw new InternalServerErrorException();
+    }
+  }
+
+  async getPoll(pollID: string): Promise<Poll> {
+    this.logger.log(`Attempting to get poll with: ${pollID}`);
+
+    const key = `polls:${pollID}`;
+
+    try {
+      const currentPoll = await this.redisClient.send_command(
+        'JSON.GET',
+        key,
+        '.',
+      );
+
+      this.logger.verbose(currentPoll);
+
+      // if (currentPoll?.hasStarted) {
+      //   throw new BadRequestException('The poll has already started');
+      // }
+
+      return JSON.parse(currentPoll);
+    } catch (e) {
+      this.logger.error(`Failed to get pollID ${pollID}`);
+      throw e;
+    }
+  }
+
+  async addParticipant({
+    pollID,
+    userID,
+    name,
+  }: AddParticipantData): Promise<Poll> {
+    this.logger.log(
+      `Attempting to add a participant with userID/name: ${userID}/${name} to pollID: ${pollID}`,
+    );
+
+    const key = `polls:${pollID}`;
+    const participantPath = `.participants.${userID}`;
+
+    try {
+      await this.redisClient.send_command(
+        'JSON.SET',
+        key,
+        participantPath,
+        JSON.stringify(name),
+      );
+
+      const pollJSON = await this.redisClient.send_command(
+        'JSON.GET',
+        key,
+        '.',
+      );
+
+      const poll = JSON.parse(pollJSON) as Poll;
+
+      this.logger.debug(
+        `Current Participants for pollID: ${pollID}:`,
+        poll.participants,
+      );
+
+      return poll;
+    } catch (e) {
+      this.logger.error(
+        `Failed to add a participant with userID/name: ${userID}/${name} to pollID: ${pollID}`,
+      );
+      throw e;
     }
   }
 }
