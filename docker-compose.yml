@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  app:
+    container_name: nestjs-app
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/home/node/app
+      - ./node_modules:/home/node/app/node_modules
+    ports:
+      - ${PORT}:${PORT}
+    entrypoint: dockerize -wait tcp://redis:6379 -timeout 40s .docker/entrypoints/dev.sh
+    env_file:
+      - .env
+    networks:
+      - webnet
+    depends_on:
+      - redis
+    extra_hosts:
+      - 'host.docker.internal:172.17.0.1'
+
+  redis:
+    image: redis:7-alpine
+    container_name: "redis-worker"
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    volumes: 
+      - .docker/redis_data:/data
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: bridge
