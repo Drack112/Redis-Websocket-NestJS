@@ -12,9 +12,8 @@ import { PollsModule } from './polls/polls.module';
       isGlobal: true,
     }),
     PollsModule,
-    CustomRedisModule
+    CustomRedisModule,
   ],
   controllers: [],
-  providers: [],
 })
 export class AppModule {}
