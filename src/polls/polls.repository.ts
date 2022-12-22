@@ -32,6 +32,7 @@ export class PollsRepository {
       votesPerVoter,
       participants: {},
       adminID: userID,
+      hasStarted: false,
     };
 
     this.logger.log(
@@ -49,6 +50,7 @@ export class PollsRepository {
           ['expire', key, this.ttl],
         ])
         .exec();
+
       return initialPoll;
     } catch (e) {
       this.logger.error(
@@ -103,25 +105,31 @@ export class PollsRepository {
         JSON.stringify(name),
       );
 
-      const pollJSON = await this.redisClient.send_command(
-        'JSON.GET',
-        key,
-        '.',
-      );
-
-      const poll = JSON.parse(pollJSON) as Poll;
-
-      this.logger.debug(
-        `Current Participants for pollID: ${pollID}:`,
-        poll.participants,
-      );
-
-      return poll;
+      return this.getPoll(pollID);
     } catch (e) {
       this.logger.error(
         `Failed to add a participant with userID/name: ${userID}/${name} to pollID: ${pollID}`,
       );
       throw e;
+    }
+  }
+
+  async removeParticipant(pollID: string, userID: string): Promise<Poll> {
+    this.logger.log(`removing userID: ${userID} from poll: ${pollID}`);
+
+    const key = `polls:${pollID}`;
+    const participantPath = `.participants.${userID}`;
+
+    try {
+      await this.redisClient('JSON.DEL', key, participantPath);
+
+      return this.getPoll(pollID);
+    } catch (e) {
+      this.logger.error(
+        `Failed to remove userID: ${userID} from poll: ${pollID}`,
+        e,
+      );
+      throw new InternalServerErrorException('Failed to remove participant');
     }
   }
 }

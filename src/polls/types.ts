@@ -19,6 +19,17 @@ export type RejoinPollFields = {
   name: string;
 };
 
+export type AddParticipantsFields = {
+  pollID: string;
+  userID: string;
+  name: string;
+};
+
+export type RemoveParticipantsData = {
+  userID: string;
+  pollID: string;
+};
+
 // repository types
 export type CreatePollData = {
   pollID: string;
