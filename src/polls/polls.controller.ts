@@ -31,7 +31,7 @@ export class PollsController {
 
     const result = await this.pollsService.joinPoll(joinPollDto);
 
-    return result
+    return result;
   }
 
   @UseGuards(PollsGuard)
@@ -47,4 +47,3 @@ export class PollsController {
     return result;
   }
 }
-
