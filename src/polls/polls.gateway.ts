@@ -1,4 +1,10 @@
-import { Logger, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  Logger,
+  UseFilters,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -55,6 +61,6 @@ export class PollsGateway
 
   @SubscribeMessage('test')
   async test() {
-    throw new Error('hey');
+    throw new BadRequestException('test');
   }
 }
