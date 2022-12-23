@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Logger,
   UseFilters,
   UseGuards,
@@ -19,7 +18,7 @@ import {
 
 import { Namespace } from 'socket.io';
 import { WsCatchAllFilter } from 'src/exceptions/ws-catch-all-filter';
-import { GatewayAdminGuard } from './gateway-admin.guard';
+import { GatewayAdminGuard } from './guards/gateway-admin.guard';
 import { PollsService } from './polls.service';
 import { SocketWithAuth } from './types';
 

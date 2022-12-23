@@ -3,8 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';
 
-import { AddParticipantData, CreatePollData } from './types';
-import { Poll } from './interfaces/Poll.interface';
+import { AddParticipantData, CreatePollData } from '../types';
+import { Poll } from '../interfaces/Poll.interface';
 import { IORedisKey } from 'src/redis/options';
 
 @Injectable()

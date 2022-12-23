@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server, ServerOptions } from 'socket.io';
+
 import { SocketWithAuth } from './polls/types';
 
 export class SocketIOAdapter extends IoAdapter {
@@ -24,9 +25,11 @@ export class SocketIOAdapter extends IoAdapter {
       ],
     };
 
+    /*
     this.logger.log('Configuring SocketIO server with custom CORS options', {
       cors,
     });
+    */
 
     const optionsWithCORS: ServerOptions = {
       ...options,
@@ -39,7 +42,6 @@ export class SocketIOAdapter extends IoAdapter {
     const createTokenMiddleware =
       (jwtService: JwtService, logger: Logger) =>
       (socket: SocketWithAuth, next) => {
-        // for Postman testing support, fallback to token header
         const token =
           socket.handshake.auth.token || socket.handshake.headers['token'];
 

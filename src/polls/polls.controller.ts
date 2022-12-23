@@ -11,7 +11,7 @@ import {
 
 import { CreatePollDto } from './dto/create-poll.dto';
 import { JoinPollDto } from './dto/join-poll.dto';
-import { PollsGuard } from './polls.guard';
+import { PollsGuard } from './guards/polls.guard';
 import { PollsService } from './polls.service';
 import { RequestWithAuth } from './types';
 

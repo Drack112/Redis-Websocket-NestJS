@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import { createPollID, createuserID } from 'utils/generate-nano-id';
 import { Poll } from './interfaces/Poll.interface';
-import { PollsRepository } from './polls.repository';
+import { PollsRepository } from './repository/polls.repository';
 import {
   AddParticipantsFields,
   CreatePollFields,
