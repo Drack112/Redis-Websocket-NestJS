@@ -1,5 +1,5 @@
 import { createNominationId } from '../../utils/generate-nano-id';
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { createPollID, createuserID } from 'utils/generate-nano-id';
@@ -11,6 +11,7 @@ import {
   CreatePollFields,
   JoinPollFields,
   RejoinPollFields,
+  SubmitRankingsFields,
 } from './types';
 
 @Injectable()
@@ -131,5 +132,21 @@ export class PollsService {
 
   async removeNomination(pollID: string, nominationID: string): Promise<Poll> {
     return this.pollsRepository.removeNomination(pollID, nominationID);
+  }
+
+  async startPoll(pollID: string): Promise<Poll> {
+    return this.pollsRepository.startPoll(pollID);
+  }
+
+  async submitRankings(rankingsData: SubmitRankingsFields): Promise<Poll> {
+    const hasPollStarted = this.pollsRepository.getPoll(rankingsData.pollID);
+
+    if (!hasPollStarted) {
+      throw new BadRequestException(
+        'Participants cannot rank until the poll has started.',
+      );
+    }
+
+    return this.pollsRepository.addParticipantRankings(rankingsData);
   }
 }
