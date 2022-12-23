@@ -17,6 +17,12 @@ export type Rankings = {
   [userID: string]: NominationID[];
 };
 
+export type Results = Array<{
+  nominationID: NominationID;
+  nominationText: string;
+  score: number;
+}>;
+
 export interface Poll {
   id: string;
   topic: string;
@@ -25,5 +31,6 @@ export interface Poll {
   adminID: string;
   nominations: Nominations;
   rankings: Rankings;
+  results: Results;
   hasStarted: boolean;
 }
