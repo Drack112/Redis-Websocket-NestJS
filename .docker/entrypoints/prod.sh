@@ -4,4 +4,4 @@ if [ ! -f ".env" ]; then
     cp .env.example .env
 fi
 
-pnpm start:prod
+node /home/node/app/dist/src/main

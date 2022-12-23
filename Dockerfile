@@ -21,7 +21,6 @@ COPY . .
 
 RUN pnpm build
 
-
 FROM node:16-alpine as production
 
 RUN apk add --no-cache bash wget curl
@@ -42,4 +41,4 @@ COPY package.json pnpm-lock.yaml ./
 
 RUN pnpm install --prod
 
-COPY --from=development /home/node/app/dist ./dist
+COPY --from=development /home/node/app/dist /home/node/app/dist

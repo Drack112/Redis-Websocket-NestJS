@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  app:
+    container_name: nestjs-app-production
+    build:
+      context: .
+      target: production
+    volumes:
+      - .:/home/node/app
+      - ./node_modules:/home/node/app/node_modules
+    ports:
+      - ${PORT}:${PORT}
+    entrypoint: dockerize -wait tcp://redis:6379 -timeout 40s .docker/entrypoints/prod.sh
+    env_file:
+      - .env
+    networks:
+      - webnet
+    depends_on:
+      - redis
+    extra_hosts:
+      - 'host.docker.internal:172.17.0.1'
+
+  redis:
+    image: 'redislabs/rejson:2.0.0'
+    container_name: 'redis-worker-production'
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - .docker/redis_data:/data
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: bridge
