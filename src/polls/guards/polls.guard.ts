@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
-import { RequestWithAuth } from './types';
+import { RequestWithAuth } from '../types';
 
 @Injectable()
 export class PollsGuard implements CanActivate {

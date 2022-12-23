@@ -1,3 +1,4 @@
+import { createNominationId } from '../../utils/generate-nano-id';
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
@@ -5,6 +6,7 @@ import { createPollID, createuserID } from 'utils/generate-nano-id';
 import { Poll } from './interfaces/Poll.interface';
 import { PollsRepository } from './repository/polls.repository';
 import {
+  AddNominationFields,
   AddParticipantsFields,
   CreatePollFields,
   JoinPollFields,
@@ -110,5 +112,24 @@ export class PollsService {
 
   async getPoll(pollID: string): Promise<Poll> {
     return this.pollsRepository.getPoll(pollID);
+  }
+
+  async addNomination({
+    pollID,
+    userID,
+    text,
+  }: AddNominationFields): Promise<Poll> {
+    return this.pollsRepository.addNomination({
+      pollID,
+      nominationID: createNominationId(),
+      nomination: {
+        userID,
+        text,
+      },
+    });
+  }
+
+  async removeNomination(pollID: string, nominationID: string): Promise<Poll> {
+    return this.pollsRepository.removeNomination(pollID, nominationID);
   }
 }
